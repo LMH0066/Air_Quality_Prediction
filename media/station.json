@@ -1,0 +1,74 @@
+[
+    {
+        "station": "Aotizhongxin",
+        "latitude": 40.0031,
+        "longitude": 116.407,
+        "station_code": "1011A"
+    },
+    {
+        "station": "Changping",
+        "latitude": 40.1952,
+        "longitude": 116.23,
+        "station_code": "1010A"
+    },
+    {
+        "station": "Dingling",
+        "latitude": 40.2865,
+        "longitude": 116.17,
+        "station_code": "1002A"
+    },
+    {
+        "station": "Dongsi",
+        "latitude": 39.9522,
+        "longitude": 116.434,
+        "station_code": "1003A"
+    },
+    {
+        "station": "Guanyuan",
+        "latitude": 39.9425,
+        "longitude": 116.361,
+        "station_code": "1006A"
+    },
+    {
+        "station": "Gucheng",
+        "latitude": 39.9279,
+        "longitude": 116.225,
+        "station_code": "1012A"
+    },
+    {
+        "station": "Huairou",
+        "latitude": 40.3937,
+        "longitude": 116.644,
+        "station_code": "1009A"
+    },
+    {
+        "station": "Nongzhanguan",
+        "latitude": 39.9716,
+        "longitude": 116.473,
+        "station_code": "1005A"
+    },
+    {
+        "station": "Shunyi",
+        "latitude": 40.1438,
+        "longitude": 116.72,
+        "station_code": "1008A"
+    },
+    {
+        "station": "Tiantan",
+        "latitude": 39.8745,
+        "longitude": 116.434,
+        "station_code": "1004A"
+    },
+    {
+        "station": "Wanliu",
+        "latitude": 39.9934,
+        "longitude": 116.315,
+        "station_code": "1007A"
+    },
+    {
+        "station": "Wanshouxigong",
+        "latitude": 39.8673,
+        "longitude": 116.366,
+        "station_code": "1001A"
+    }
+]
