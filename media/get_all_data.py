@@ -24,7 +24,7 @@ station_codes = ['1001A', '1002A', '1003A', '1004A', '1005A', '1006A', '1007A', 
 
 
 # 获取过去24小时天气
-def fetchWeather(_location):
+def fetch_weather(_location):
     params = parse.urlencode({
         'key': KEY,
         'location': _location,
@@ -37,7 +37,7 @@ def fetchWeather(_location):
 
 
 # 获取空气质量
-def getDate(file_path, t):
+def get_date(file_path, t):
     host = 'https://nairall.market.alicloudapi.com'
     path = '/api/v1/nation_air/station_realtime_list'
     method = 'GET'
@@ -78,11 +78,11 @@ def generate_dataset(data, labels, n_in=1, n_out=1, dropnan=True):
 
 
 # 预测
-def predict_12(model, X, n_features):
+def predict_12(_model, X, n_features):
     res = pd.DataFrame(
         columns=['PM2.5(t)', 'PM10(t)', 'SO2(t)', 'NO2(t)', 'CO(t)', 'O3(t)', 'TEMP(t)', 'PRES(t)', 'DEWP(t)'])
     for i in range(12):
-        y_pred = model.predict(np.array(X).reshape(1, -1))
+        y_pred = _model.predict(np.array(X).reshape(1, -1))
         # drop late data
         X = X.shift(-n_features)
         # add predicted data
@@ -97,7 +97,7 @@ def predict_12(model, X, n_features):
 
 if __name__ == '__main__':
     location = getLocation
-    weathers = json.loads(fetchWeather(location))
+    weathers = json.loads(fetch_weather(location))
     path = os.getcwd()
     # 得到过去24小时天气数据
     time = re.split('T|\+', weathers['results'][0]['hourly_history'][0]['last_update'])
@@ -108,14 +108,14 @@ if __name__ == '__main__':
         file_path = os.path.join(path, 'data', t + ".json")
         # 通过天气数据的时间获取空气质量数据并存储
         if not os.path.exists(file_path):
-            getDate(file_path, t)
+            get_date(file_path, t)
         # 将天气数据和空气质量数据合并
         datas = []
         with open(file_path, 'r', encoding='utf8')as fp:
             json_data = json.load(fp)
             for data in json_data["data"]:
                 for d in data:
-                    if "1001A" <= d["station_code"] <= "1012A":
+                    if d["station_code"] >= "1001A" and d["station_code"] <= "1012A":
                         datas.append(d)
                     else:
                         break
@@ -135,6 +135,8 @@ if __name__ == '__main__':
         df.interpolate(inplace=True, limit_direction='both')
         df.reset_index(inplace=True)
         df = df[features].copy()
+        before_path = os.path.join(path, 'before', station_code + ".csv")
+        df.to_csv(before_path, sep=',', header=True, index=True)
 
         X_test = generate_dataset(df, n_in=24, n_out=12, labels=features)
         # print(X_test.iloc[0])
@@ -142,3 +144,4 @@ if __name__ == '__main__':
         result_path = os.path.join(path, 'result', station_code + ".csv")
         result.to_csv(result_path, sep=',', header=True, index=True)
         # print(result)
+

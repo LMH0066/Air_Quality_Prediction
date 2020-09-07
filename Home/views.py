@@ -11,9 +11,11 @@ from django.views.decorators.csrf import csrf_exempt
 # 返回全国全部站点的检测数据
 @csrf_exempt
 def get_china_aqi(request):
-    path = os.path.join(MEDIA_ROOT, "data.json")
+    path = os.path.join(MEDIA_ROOT, "data")
+    file_list = os.listdir(path)
+    file_path = os.path.join(MEDIA_ROOT, "data", max(file_list))
     # 读取json并进行分析
-    with open(path, 'r') as load_f:
+    with open(file_path, 'r') as load_f:
         load_dict = json.load(load_f)
     if load_f:
         datas = load_dict['data']
@@ -50,16 +52,18 @@ def predict(request):
                 station_name = data['station']
                 station_code = data['station_code']
         result_path = os.path.join(MEDIA_ROOT, "result", station_code + ".csv")
+        before_path = os.path.join(MEDIA_ROOT, "before", station_code + ".csv")
         with open(result_path, 'r') as result_f:
             result_dict = csv.reader(result_f)
-            column = [row[1] for row in result_dict]
+            result_column = [row[1] for row in result_dict]
+        with open(before_path, 'r') as before_f:
+            before_dict = csv.reader(before_f)
+            before_column = [row[1] for row in before_dict]
         if result_f:
             return HttpResponse(json.dumps({'status': 0, 'data': {
                 'station': station_name,
-                'forecast': column[1:]}}))
-            # for data in result_dict:
-            #     if data['station'][0] == station_name:
-            #         return HttpResponse(json.dumps({'status': 0, 'data': {'station' : station_name, 'forecast' : data['data']}}))
+                'before': before_column[1:],
+                'forecast': result_column[1:]}}))
         else:
             return HttpResponse(json.dumps({'status': 1}))
     return HttpResponse(json.dumps({'status': 1}))
