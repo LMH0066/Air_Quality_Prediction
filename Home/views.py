@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 from django.shortcuts import render
 import json, os, sys, math, csv
 import numpy as np
@@ -24,6 +26,7 @@ def get_china_aqi(request):
             for d in data:
                 if d['aqi']:
                     results.append(d)
+        results = sorted(results, key=itemgetter('aqi'), reverse=True)
         return HttpResponse(json.dumps({'status': 0, 'data': results}))
     return HttpResponse(json.dumps({'status': 1}))
 
