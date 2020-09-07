@@ -8,3 +8,9 @@
 out
 gen
 .gitignore
+media/before/*
+media/result/*
+Air_Quality_Prediction/__pycache__/
+Home/__pycache__/
+Home/migrations/__pycache__/
+db.sqlite3

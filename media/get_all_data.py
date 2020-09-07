@@ -115,7 +115,7 @@ if __name__ == '__main__':
             json_data = json.load(fp)
             for data in json_data["data"]:
                 for d in data:
-                    if d["station_code"] >= "1001A" and d["station_code"] <= "1012A":
+                    if "1001A" <= d["station_code"] <= "1012A":
                         datas.append(d)
                     else:
                         break
@@ -128,8 +128,10 @@ if __name__ == '__main__':
         data_all = data_all.append(data_df)
     data_all = data_all.rename(
         columns={'pm2_5': 'PM2.5', 'pm10': 'PM10', 'so2': 'SO2', 'no2': 'NO2', 'co': 'CO', 'o3': 'O3'})
+    data_all['CO'] = data_all['CO'].map(lambda x: x*1000)
 
-    model = joblib.load('xgboost.model')
+    model_path = os.path.join(path, 'xgboost.model')
+    model = joblib.load(model_path)
     for station_code in station_codes:
         df = data_all[data_all['station_code'] == station_code][features].copy().iloc[::-1]
         df.interpolate(inplace=True, limit_direction='both')
