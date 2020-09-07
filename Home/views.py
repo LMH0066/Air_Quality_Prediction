@@ -1,5 +1,5 @@
 from django.shortcuts import render
-import json, os, sys, math
+import json, os, sys, math, csv
 import numpy as np
 from Air_Quality_Prediction.settings import MEDIA_ROOT, MEDIA_URL
 from django.http import HttpResponse
@@ -33,13 +33,13 @@ def predict(request):
     latitude = request.POST.get('latitude')
     # print(longitude)
     station_path = os.path.join(MEDIA_ROOT, "station.json")
-    stus_path = os.path.join(MEDIA_ROOT, "stus.json")
     with open(station_path, 'r') as station_f:
         station_dict = json.load(station_f)
     if station_f:
         # 找到离坐标最近的监测站
         p = np.array([float(latitude), float(longitude)])
         station_name = None
+        station_code = None
         min_len = sys.maxsize
         for data in station_dict:
             p1 = np.array([data['latitude'], data['longitude']])
@@ -48,12 +48,18 @@ def predict(request):
             if min_len > new_len:
                 min_len = new_len
                 station_name = data['station']
-        with open(stus_path, 'r') as stus_f:
-            stus_dict = json.load(stus_f)
-        if stus_f:
-            for data in stus_dict:
-                if data['station'][0] == station_name:
-                    return HttpResponse(json.dumps({'status': 0, 'data': {'station' : station_name, 'forecast' : data['data']}}))
+                station_code = data['station_code']
+        result_path = os.path.join(MEDIA_ROOT, "result", station_code + ".csv")
+        with open(result_path, 'r') as result_f:
+            result_dict = csv.reader(result_f)
+            column = [row[1] for row in result_dict]
+        if result_f:
+            return HttpResponse(json.dumps({'status': 0, 'data': {
+                'station': station_name,
+                'forecast': column[1:]}}))
+            # for data in result_dict:
+            #     if data['station'][0] == station_name:
+            #         return HttpResponse(json.dumps({'status': 0, 'data': {'station' : station_name, 'forecast' : data['data']}}))
         else:
             return HttpResponse(json.dumps({'status': 1}))
     return HttpResponse(json.dumps({'status': 1}))
