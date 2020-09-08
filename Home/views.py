@@ -1,11 +1,15 @@
+import json
+import math
+import os
+import sys
 from operator import itemgetter
-
-from django.shortcuts import render
-import json, os, sys, math, csv
 import numpy as np
-from Air_Quality_Prediction.settings import MEDIA_ROOT, MEDIA_URL
+import pandas as pd
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+
+from Air_Quality_Prediction.settings import MEDIA_ROOT
+from Home.calculate_aqi import calculate
 
 
 # Create your views here.
@@ -57,16 +61,20 @@ def predict(request):
         result_path = os.path.join(MEDIA_ROOT, "result", station_code + ".csv")
         before_path = os.path.join(MEDIA_ROOT, "before", station_code + ".csv")
         with open(result_path, 'r') as result_f:
-            result_dict = csv.reader(result_f)
-            result_column = [row[1] for row in result_dict]
+            result_dict = pd.read_csv(result_f)
         with open(before_path, 'r') as before_f:
-            before_dict = csv.reader(before_f)
-            before_column = [row[1] for row in before_dict]
+            before_dict = pd.read_csv(before_f)
         if result_f:
-            return HttpResponse(json.dumps({'status': 0, 'data': {
-                'station': station_name,
-                'before': before_column[1:],
-                'forecast': result_column[1:]}}))
+            air_quality = [{'AQI': calculate(before_dict['PM2.5'][0], before_dict['CO'][0] / 100),
+                            'PM2.5': float(before_dict['PM2.5'][0]), 'PM10': float(before_dict['PM10'][0]),
+                            'SO2': float(before_dict['SO2'][0]), 'NO2': float(before_dict['NO2'][0]),
+                            'CO': float(before_dict['CO'][0] / 100), 'O3': float(before_dict['O3'][0])}]
+            for i in range(0, 12):
+                air_quality.append({'AQI': calculate(result_dict['PM2.5(t)'][i], result_dict['CO(t)'][i] / 100),
+                                    'PM2.5': float(result_dict['PM2.5(t)'][i]), 'PM10': float(result_dict['PM10(t)'][i]),
+                                    'SO2': float(result_dict['SO2(t)'][i]), 'NO2': float(result_dict['NO2(t)'][i]),
+                                    'CO': float(result_dict['CO(t)'][i] / 100), 'O3': float(result_dict['O3(t)'][i])})
+            return HttpResponse(json.dumps({'status': 0, 'data': {'airQuality': air_quality}}))
         else:
             return HttpResponse(json.dumps({'status': 1}))
     return HttpResponse(json.dumps({'status': 1}))
