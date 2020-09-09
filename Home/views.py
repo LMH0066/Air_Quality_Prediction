@@ -65,10 +65,10 @@ def predict(request):
         with open(before_path, 'r') as before_f:
             before_dict = pd.read_csv(before_f)
         if result_f:
-            air_quality = [{'AQI': calculate(before_dict['PM2.5'][0], before_dict['CO'][0] / 100),
-                            'PM2.5': float(before_dict['PM2.5'][0]), 'PM10': float(before_dict['PM10'][0]),
-                            'SO2': float(before_dict['SO2'][0]), 'NO2': float(before_dict['NO2'][0]),
-                            'CO': float(before_dict['CO'][0] / 100), 'O3': float(before_dict['O3'][0])}]
+            air_quality = [{'AQI': calculate(before_dict['PM2.5'][23], before_dict['CO'][23] / 100),
+                            'PM2.5': float(before_dict['PM2.5'][23]), 'PM10': float(before_dict['PM10'][23]),
+                            'SO2': float(before_dict['SO2'][23]), 'NO2': float(before_dict['NO2'][23]),
+                            'CO': float(before_dict['CO'][23] / 100), 'O3': float(before_dict['O3'][23])}]
             for i in range(0, 12):
                 air_quality.append({'AQI': calculate(result_dict['PM2.5(t)'][i], result_dict['CO(t)'][i] / 100),
                                     'PM2.5': float(result_dict['PM2.5(t)'][i]), 'PM10': float(result_dict['PM10(t)'][i]),

@@ -133,13 +133,15 @@ if __name__ == '__main__':
     model_path = os.path.join(path, 'xgboost.model')
     model = joblib.load(model_path)
     for station_code in station_codes:
-        df = data_all[data_all['station_code'] == station_code][features].copy().iloc[::-1]
+        record_features = ['PM2.5', 'PM10', 'SO2', 'NO2', 'CO', 'O3', 'TEMP', 'PRES', 'DEWP', 'pubtime']
+        df = data_all[data_all['station_code'] == station_code][record_features].copy().iloc[::-1]
         df.interpolate(inplace=True, limit_direction='both')
         df.reset_index(inplace=True)
-        df = df[features].copy()
+        df = df[record_features].copy()
         before_path = os.path.join(path, 'before', station_code + ".csv")
         df.to_csv(before_path, sep=',', header=True, index=True)
 
+        df = df[features].copy()
         X_test = generate_dataset(df, n_in=24, n_out=12, labels=features)
         # print(X_test.iloc[0])
         result = predict_12(model, X_test.iloc[0], 9).drop(['index'], axis=1)
