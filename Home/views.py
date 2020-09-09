@@ -2,6 +2,7 @@ import json
 import math
 import os
 import sys
+from datetime import datetime, timedelta
 from operator import itemgetter
 import numpy as np
 import pandas as pd
@@ -74,7 +75,15 @@ def predict(request):
                                     'PM2.5': float(result_dict['PM2.5(t)'][i]), 'PM10': float(result_dict['PM10(t)'][i]),
                                     'SO2': float(result_dict['SO2(t)'][i]), 'NO2': float(result_dict['NO2(t)'][i]),
                                     'CO': float(result_dict['CO(t)'][i] / 100), 'O3': float(result_dict['O3(t)'][i])})
-            return HttpResponse(json.dumps({'status': 0, 'data': {'airQuality': air_quality}}))
+
+            pm_25 = []
+            for i in range(0, 24):
+                pm_25.append([before_dict['pubtime'][i], before_dict['PM2.5'][i]])
+            before_time = datetime.strptime(before_dict['pubtime'][23], "%Y-%m-%d %H:%M:%S")
+            for i in range(0, 12):
+                before_time = before_time + timedelta(hours=1)
+                pm_25.append([before_time.strftime("%Y-%m-%d %H:%M:%S"), result_dict['PM2.5(t)'][i]])
+            return HttpResponse(json.dumps({'status': 0, 'data': {'PM2.5': pm_25, 'airQuality': air_quality}}))
         else:
             return HttpResponse(json.dumps({'status': 1}))
     return HttpResponse(json.dumps({'status': 1}))
