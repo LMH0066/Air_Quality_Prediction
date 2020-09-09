@@ -66,23 +66,30 @@ def predict(request):
         with open(before_path, 'r') as before_f:
             before_dict = pd.read_csv(before_f)
         if result_f:
-            air_quality = [{'AQI': calculate(before_dict['PM2.5'][23], before_dict['CO'][23] / 100),
-                            'PM2.5': float(before_dict['PM2.5'][23]), 'PM10': float(before_dict['PM10'][23]),
-                            'SO2': float(before_dict['SO2'][23]), 'NO2': float(before_dict['NO2'][23]),
-                            'CO': float(before_dict['CO'][23] / 100), 'O3': float(before_dict['O3'][23])}]
+            air_quality = [{'AQI': round(calculate(before_dict['PM2.5'][23], before_dict['CO'][23] / 1000), 2),
+                            'PM2.5': round(float(before_dict['PM2.5'][23]), 2),
+                            'PM10': round(float(before_dict['PM10'][23]), 2),
+                            'SO2': round(float(before_dict['SO2'][23]), 2),
+                            'NO2': round(float(before_dict['NO2'][23]), 2),
+                            'CO': round(float(before_dict['CO'][23] / 1000), 2),
+                            'O3': round(float(before_dict['O3'][23]), 2)}]
             for i in range(0, 12):
-                air_quality.append({'AQI': calculate(result_dict['PM2.5(t)'][i], result_dict['CO(t)'][i] / 100),
-                                    'PM2.5': float(result_dict['PM2.5(t)'][i]), 'PM10': float(result_dict['PM10(t)'][i]),
-                                    'SO2': float(result_dict['SO2(t)'][i]), 'NO2': float(result_dict['NO2(t)'][i]),
-                                    'CO': float(result_dict['CO(t)'][i] / 100), 'O3': float(result_dict['O3(t)'][i])})
+                air_quality.append({'AQI': round(calculate(result_dict['PM2.5(t)'][i], result_dict['CO(t)'][i] / 1000), 2),
+                                    'PM2.5': round(float(result_dict['PM2.5(t)'][i]), 2),
+                                    'PM10': round(float(result_dict['PM10(t)'][i]), 2),
+                                    'SO2': round(float(result_dict['SO2(t)'][i]), 2),
+                                    'NO2': round(float(result_dict['NO2(t)'][i]), 2),
+                                    'CO': round(float(result_dict['CO(t)'][i] / 1000), 2),
+                                    'O3': round(float(result_dict['O3(t)'][i]), 2)})
 
             pm_25 = []
             for i in range(0, 24):
-                pm_25.append([before_dict['pubtime'][i], before_dict['PM2.5'][i]])
+                t = datetime.strptime(before_dict['pubtime'][i], "%Y-%m-%d %H:%M:%S")
+                pm_25.append([t.strftime("%H:%M"), before_dict['PM2.5'][i]])
             before_time = datetime.strptime(before_dict['pubtime'][23], "%Y-%m-%d %H:%M:%S")
             for i in range(0, 12):
                 before_time = before_time + timedelta(hours=1)
-                pm_25.append([before_time.strftime("%Y-%m-%d %H:%M:%S"), result_dict['PM2.5(t)'][i]])
+                pm_25.append([before_time.strftime("%H:%M"), result_dict['PM2.5(t)'][i]])
             return HttpResponse(json.dumps({'status': 0, 'data': {'PM2.5': pm_25, 'airQuality': air_quality}}))
         else:
             return HttpResponse(json.dumps({'status': 1}))
