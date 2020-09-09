@@ -38,8 +38,8 @@ def get_china_aqi(request):
 # 预测
 @csrf_exempt
 def predict(request):
-    longitude = request.POST.get('longitude')
-    latitude = request.POST.get('latitude')
+    longitude = request.GET.get('longitude')
+    latitude = request.GET.get('latitude')
     # print(longitude)
     station_path = os.path.join(MEDIA_ROOT, "station.json")
     with open(station_path, 'r') as station_f:
