@@ -65,7 +65,9 @@ def generate_dataset(data, labels, n_in=1, n_out=1, dropnan=True):
     cols, names = list(), list()
     # input sequence (t-n, ... t-1)
     for i in range(n_in, 0, -1):
-        cols.append(df.loc[:i - 1, :])
+        small_df = df.loc[n_in - i:, :]
+        small_df.index = range(len(small_df))
+        cols.append(small_df)
         names += [('%s(t-%d)' % (df.columns[j], i)) for j in range(n_vars)]
 
     # agg = pd.DataFrame(zip(cols))
