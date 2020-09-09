@@ -15,6 +15,14 @@ from Home.calculate_aqi import calculate
 
 # Create your views here.
 
+def add_header(response):
+    response['Access-Control-Allow-Origin'] = '*'
+    response['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+    response['Access-Control-Max-Age'] = '1000'
+    response['Access-Control-Allow-Headers'] = '*'
+    return response
+
+
 # 返回全国全部站点的检测数据
 @csrf_exempt
 def get_china_aqi(request):
@@ -32,8 +40,8 @@ def get_china_aqi(request):
                 if d['aqi']:
                     results.append(d)
         results = sorted(results, key=itemgetter('aqi'), reverse=True)
-        return HttpResponse(json.dumps({'status': 0, 'data': results}))
-    return HttpResponse(json.dumps({'status': 1}))
+        return add_header(HttpResponse(json.dumps({'status': 0, 'data': results})))
+    return add_header(HttpResponse(json.dumps({'status': 1})))
 
 
 # 预测
@@ -90,7 +98,7 @@ def predict(request):
             for i in range(0, 12):
                 before_time = before_time + timedelta(hours=1)
                 pm_25.append([before_time.strftime("%H:%M"), result_dict['PM2.5(t)'][i]])
-            return HttpResponse(json.dumps({'status': 0, 'data': {'PM2.5': pm_25, 'airQuality': air_quality}}))
+            return add_header(HttpResponse(json.dumps({'status': 0, 'data': {'PM2.5': pm_25, 'airQuality': air_quality}})))
         else:
-            return HttpResponse(json.dumps({'status': 1}))
-    return HttpResponse(json.dumps({'status': 1}))
+            return add_header(HttpResponse(json.dumps({'status': 1})))
+    return add_header(HttpResponse(json.dumps({'status': 1})))
