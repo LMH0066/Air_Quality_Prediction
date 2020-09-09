@@ -17,7 +17,7 @@ def cal_pm_iaqi(pm_val):
     elif 75 <= pm_val < 115:
         iaqi = cal_linear(100, 150, 75, 115, pm_val)
     else:
-        pass
+        iaqi = 0
 
     return iaqi
 
@@ -30,9 +30,8 @@ def cal_co_iaqi(co_val):
         iaqi = cal_linear(0, 50, 0, 3, co_val)
     elif 3 <= co_val < 5:
         iaqi = cal_linear(50, 100, 2, 4, co_val)
-
     else:
-        pass
+        iaqi = 0
 
     return iaqi
 
