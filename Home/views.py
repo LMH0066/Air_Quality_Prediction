@@ -118,7 +118,7 @@ def predict_test(request):
     air_quality = [{'AQI': round(calculate(0, 0)), 'PM2.5': round(float(0)), 'PM10': round(float(0)),
                     'SO2': round(float(0)), 'NO2': round(float(0)), 'CO': round(float(0), 1), 'O3': round(float(0))}]
     for i in range(0, 12):
-        num = (i + 1) * 20
+        num = (i + 1) * 30
         air_quality.append({'AQI': round(calculate(num, num / 100)), 'PM2.5': round(float(num)), 'PM10': round(float(num)),
                             'SO2': round(float(num)), 'NO2': round(float(num)), 'CO': round(float(num / 100), 1),
                             'O3': round(float(num))})
@@ -126,10 +126,10 @@ def predict_test(request):
     pm_25 = []
     for i in range(0, 24):
         t = datetime.strptime(before_dict['pubtime'][i], "%Y-%m-%d %H:%M:%S")
-        pm_25.append([t.strftime("%H:%M"), round(float(i * 10), 1)])
+        pm_25.append([t.strftime("%H:%M"), round(float(0), 1)])
     before_time = datetime.strptime(before_dict['pubtime'][23], "%Y-%m-%d %H:%M:%S")
     for i in range(0, 12):
         before_time = before_time + timedelta(hours=1)
-        pm_25.append([before_time.strftime("%H:%M"), round(float(240 + i * 10), 1)])
+        pm_25.append([before_time.strftime("%H:%M"), round(float((i + 1) * 30), 1)])
     # pm_25 = serializers.serialize("json", pm_25)
     return add_header(HttpResponse(json.dumps({'status': 0, 'data': {'PM2.5': pm_25, 'airQuality': air_quality}})))
