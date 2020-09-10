@@ -40,7 +40,7 @@ def get_china_aqi(request):
                 if d['aqi']:
                     results.append(d)
         results = sorted(results, key=itemgetter('aqi'), reverse=True)
-        return add_header(HttpResponse(json.dumps({'status': 0, 'data': results})))
+        return add_header(HttpResponse(json.dumps({'status': 0, 'data': {'station': results}})))
     return add_header(HttpResponse(json.dumps({'status': 1})))
 
 
