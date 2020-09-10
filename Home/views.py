@@ -38,7 +38,10 @@ def get_china_aqi(request):
         for data in datas:
             for d in data:
                 if d['aqi']:
-                    results.append(d)
+                    results.append({'province': d['province'], 'city': d['city'],
+                                    'city_code': d['city_code'], 'station': d['station'],
+                                    'aqi': d['aqi'], 'no2': d['no2'], 'so2': d['so2'], 'co': d['co'],
+                                    'o3': d['o3'], 'pm2_5': d['pm2_5'], 'pm10': d['pm10']})
         results = sorted(results, key=itemgetter('aqi'), reverse=True)
         return add_header(HttpResponse(json.dumps({'status': 0, 'data': {'station': results}})))
     return add_header(HttpResponse(json.dumps({'status': 1})))
