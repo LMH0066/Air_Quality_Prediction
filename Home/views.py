@@ -3,6 +3,7 @@ import math
 import os
 import sys
 from datetime import datetime, timedelta
+from django.core import serializers
 from operator import itemgetter
 import numpy as np
 import pandas as pd
@@ -96,11 +97,12 @@ def predict(request):
             pm_25 = []
             for i in range(0, 24):
                 t = datetime.strptime(before_dict['pubtime'][i], "%Y-%m-%d %H:%M:%S")
-                pm_25.append([t.strftime("%H:%M"), round(before_dict['PM2.5'][i],1)])
+                pm_25.append([t.strftime("%H:%M"), round(float(before_dict['PM2.5'][i]), 1)])
             before_time = datetime.strptime(before_dict['pubtime'][23], "%Y-%m-%d %H:%M:%S")
             for i in range(0, 12):
                 before_time = before_time + timedelta(hours=1)
-                pm_25.append([before_time.strftime("%H:%M"), round(result_dict['PM2.5(t)'][i],1)])
+                pm_25.append([before_time.strftime("%H:%M"), round(float(result_dict['PM2.5(t)'][i]), 1)])
+            # pm_25 = serializers.serialize("json", pm_25)
             return add_header(HttpResponse(json.dumps({'status': 0, 'data': {'PM2.5': pm_25, 'airQuality': air_quality}})))
         else:
             return add_header(HttpResponse(json.dumps({'status': 1})))
