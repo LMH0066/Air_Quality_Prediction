@@ -74,21 +74,21 @@ def predict(request):
         with open(before_path, 'r') as before_f:
             before_dict = pd.read_csv(before_f)
         if result_f:
-            air_quality = [{'AQI': round(calculate(before_dict['PM2.5'][23], before_dict['CO'][23] / 1000), 2),
-                            'PM2.5': round(float(before_dict['PM2.5'][23]), 2),
-                            'PM10': round(float(before_dict['PM10'][23]), 2),
-                            'SO2': round(float(before_dict['SO2'][23]), 2),
-                            'NO2': round(float(before_dict['NO2'][23]), 2),
-                            'CO': round(float(before_dict['CO'][23] / 1000), 2),
-                            'O3': round(float(before_dict['O3'][23]), 2)}]
+            air_quality = [{'AQI': round(calculate(before_dict['PM2.5'][23], before_dict['CO'][23] / 1000)),
+                            'PM2.5': round(float(before_dict['PM2.5'][23])),
+                            'PM10': round(float(before_dict['PM10'][23])),
+                            'SO2': round(float(before_dict['SO2'][23])),
+                            'NO2': round(float(before_dict['NO2'][23])),
+                            'CO': round(float(before_dict['CO'][23] / 1000), 1),
+                            'O3': round(float(before_dict['O3'][23]))}]
             for i in range(0, 12):
-                air_quality.append({'AQI': round(calculate(result_dict['PM2.5(t)'][i], result_dict['CO(t)'][i] / 1000), 2),
-                                    'PM2.5': round(float(result_dict['PM2.5(t)'][i]), 2),
-                                    'PM10': round(float(result_dict['PM10(t)'][i]), 2),
-                                    'SO2': round(float(result_dict['SO2(t)'][i]), 2),
-                                    'NO2': round(float(result_dict['NO2(t)'][i]), 2),
-                                    'CO': round(float(result_dict['CO(t)'][i] / 1000), 2),
-                                    'O3': round(float(result_dict['O3(t)'][i]), 2)})
+                air_quality.append({'AQI': round(calculate(result_dict['PM2.5(t)'][i], result_dict['CO(t)'][i] / 1000)),
+                                    'PM2.5': round(float(result_dict['PM2.5(t)'][i])),
+                                    'PM10': round(float(result_dict['PM10(t)'][i])),
+                                    'SO2': round(float(result_dict['SO2(t)'][i])),
+                                    'NO2': round(float(result_dict['NO2(t)'][i])),
+                                    'CO': round(float(result_dict['CO(t)'][i] / 1000), 1),
+                                    'O3': round(float(result_dict['O3(t)'][i]))})
 
             pm_25 = []
             for i in range(0, 24):
